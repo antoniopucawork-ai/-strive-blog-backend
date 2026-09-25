@@ -3,6 +3,7 @@ import mongoose from "mongoose";
 import "dotenv/config";
 
 import Authorrouter from "./routes/authors.js";
+import PostRouter from "./routes/posts.js";
 
 const server = express();
 
@@ -17,6 +18,7 @@ server.get("/", (req, res) => {
   res.send("Ciao Antonio, il backend funziona!");
 });
 server.use("/authors", Authorrouter);
+server.use("/blogPosts", PostRouter);
 
 server.listen(process.env.PORT, () => {
   console.log("Server avviato sulla porta 9097");

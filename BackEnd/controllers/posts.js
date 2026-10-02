@@ -102,3 +102,31 @@ export async function deletePost(req, res) {
     res.status(500).json({ message: error.message });
   }
 }
+
+export async function updatePostCover(req, res) {
+  try {
+    const { blogPostId } = req.params;
+
+    if (!mongoose.Types.ObjectId.isValid(blogPostId)) {
+      return res.status(400).json({ message: "invalid id" });
+    }
+
+    if (!req.file) {
+      return res.status(400).json({ message: "image not found" });
+    }
+
+    const updatedPost = await Post.findByIdAndUpdate(
+      blogPostId,
+      { cover: req.file.path },
+      { returnDocument: "after" },
+    );
+
+    if (!updatedPost) {
+      return res.status(404).json({ message: "post not found" });
+    }
+
+    res.status(200).json(updatedPost);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+}

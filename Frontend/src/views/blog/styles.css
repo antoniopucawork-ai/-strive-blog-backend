@@ -1,13 +1,13 @@
 .blog-details-cover {
   width: 100%;
-  border-radius: 10px;
-  margin-bottom: 50px;
-  max-height: 80vh;
-  object-fit: cover;
-  object-position: 0% 0%;
+  height: 420px;
+  object-fit: contain;
+  object-position: center;
+  background: #f3f4f6;
+  border-radius: 16px;
   margin-top: 50px;
+  margin-bottom: 50px;
 }
-
 .blog-details-root {
   display: flex;
   width: 100%;
@@ -38,5 +38,5 @@
   align-items: center;
 }
 .rdw-editor-main {
-  border: 1px solid grey
+  border: 1px solid grey;
 }

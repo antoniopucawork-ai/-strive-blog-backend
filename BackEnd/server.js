@@ -4,8 +4,10 @@ import "dotenv/config";
 import cors from "cors";
 import Authorrouter from "./routes/authors.js";
 import PostRouter from "./routes/posts.js";
+import { logger } from "./middleware/logger.js";
 
 const server = express();
+server.use(logger);
 
 server.use(express.json());
 server.use(cors());

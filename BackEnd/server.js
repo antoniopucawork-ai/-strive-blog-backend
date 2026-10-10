@@ -5,6 +5,8 @@ import cors from "cors";
 import Authorrouter from "./routes/authors.js";
 import PostRouter from "./routes/posts.js";
 import { logger } from "./middleware/logger.js";
+import Authrouter from "./routes/auth.js";
+import { authenticate } from "./middleware/authenticate.js";
 
 const server = express();
 server.use(logger);
@@ -20,6 +22,8 @@ try {
 server.get("/", (req, res) => {
   res.send("Ciao Antonio, il backend funziona!");
 });
+server.use("/auth", Authrouter);
+server.use(authenticate);
 server.use("/authors", Authorrouter);
 server.use("/blogPosts", PostRouter);
 

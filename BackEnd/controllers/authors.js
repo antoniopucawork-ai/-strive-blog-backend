@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 import Author from "../models/Author.js";
-
+import bcrypt from "bcrypt";
 export async function getAllAuthors(req, res) {
   try {
     const page = parseInt(req.query.page) || 1;
@@ -18,12 +18,16 @@ export async function getAllAuthors(req, res) {
 
 export async function createAuthors(req, res) {
   try {
-    const { nome, cognome, email, dataDiNascita, avatar } = req.body;
+    const { nome, cognome, email, password, dataDiNascita, avatar } = req.body;
+
+   /* const hashedPassword = await bcrypt.hash(password, 10);*/
 
     const author = new Author({
       nome,
       cognome,
       email,
+      password, 
+     /* password: hashedPassword,*/
       dataDiNascita,
       avatar,
     });
@@ -59,23 +63,29 @@ export async function getAuthorbyID(req, res) {
 export async function upDateAuthor(req, res) {
   try {
     const { id } = req.params;
-    const { nome, cognome, email, dataDiNascita, avatar } = req.body;
+    const { nome, cognome, email, password, dataDiNascita, avatar } = req.body;
 
     if (!mongoose.Types.ObjectId.isValid(id)) {
       return res.status(400).json({ message: "invalid id" });
     }
 
-    const updatedAuthor = await Author.findByIdAndUpdate(
-      id,
-      {
-        nome,
-        cognome,
-        email,
-        dataDiNascita,
-        avatar,
-      },
-      { returnDocument: "after" },
-    );
+    const updateData = {
+      nome,
+      cognome,
+      email,
+      dataDiNascita,
+      avatar,
+    };
+
+    // Se viene inviata una nuova password,
+    // la hashiamo prima di aggiornarla
+    if (password) {
+      updateData.password = await bcrypt.hash(password, 10);
+    }
+
+    const updatedAuthor = await Author.findByIdAndUpdate(id, updateData, {
+      returnDocument: "after",
+    });
 
     if (!updatedAuthor) {
       return res.status(404).json({ message: "author not found" });

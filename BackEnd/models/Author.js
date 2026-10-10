@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-
+import bcrypt from "bcrypt";
 const authorSchema = new mongoose.Schema({
   nome: {
     type: String,
@@ -18,6 +18,11 @@ const authorSchema = new mongoose.Schema({
     required: true,
     unique: true,
   },
+  password: {
+    type: String,
+    required: true,
+    select: false,
+  },
   dataDiNascita: {
     type: String,
   },
@@ -25,7 +30,17 @@ const authorSchema = new mongoose.Schema({
     type: String,
   },
 });
-
+authorSchema.pre("save", async function () {
+  if (!this.password || !this.isModified("password")) {
+    return;
+  }
+  try {
+    const salt = await bcrypt.genSalt(10);
+    this.password = await bcrypt.hash(this.password, salt);
+  } catch (e) {
+    throw e;
+  }
+});
 const Author = mongoose.model("Author", authorSchema);
-export default Author;
 
+export default Author;

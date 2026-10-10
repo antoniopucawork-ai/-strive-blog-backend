@@ -32,14 +32,14 @@ export async function getPostByID(req, res) {
 
 export async function createPost(req, res) {
   try {
-    const { category, title, cover, readTime, author, content } = req.body;
+    const { category, title, cover, readTime, content } = req.body;
 
     const post = new Post({
       category,
       title,
       cover,
       readTime,
-      author,
+      author: req.author,
       content,
     });
 
@@ -54,7 +54,7 @@ export async function createPost(req, res) {
 export async function updatePost(req, res) {
   try {
     const { id } = req.params;
-    const { category, title, cover, readTime, author, content } = req.body;
+    const { category, title, cover, readTime, content } = req.body;
 
     if (!mongoose.Types.ObjectId.isValid(id)) {
       return res.status(400).json({ message: "invalid id" });
@@ -67,7 +67,6 @@ export async function updatePost(req, res) {
         title,
         cover,
         readTime,
-        author,
         content,
       },
       { returnDocument: "after" },
@@ -126,6 +125,162 @@ export async function updatePostCover(req, res) {
     }
 
     res.status(200).json(updatedPost);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+}
+// GET tutti i commenti di un post
+export async function getPostComments(req, res) {
+  try {
+    const { id } = req.params;
+
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(400).json({ message: "invalid post id" });
+    }
+
+    const post = await Post.findById(id);
+
+    if (!post) {
+      return res.status(404).json({ message: "post not found" });
+    }
+
+    res.status(200).json(post.comments);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+}
+
+// GET singolo commento
+export async function getPostCommentById(req, res) {
+  try {
+    const { id, commentId } = req.params;
+
+    if (
+      !mongoose.Types.ObjectId.isValid(id) ||
+      !mongoose.Types.ObjectId.isValid(commentId)
+    ) {
+      return res.status(400).json({ message: "invalid id" });
+    }
+
+    const post = await Post.findById(id);
+
+    if (!post) {
+      return res.status(404).json({ message: "post not found" });
+    }
+
+    const comment = post.comments.id(commentId);
+
+    if (!comment) {
+      return res.status(404).json({ message: "comment not found" });
+    }
+
+    res.status(200).json(comment);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+}
+
+// POST nuovo commento
+export async function createPostComment(req, res) {
+  try {
+    const { id } = req.params;
+    const { content } = req.body;
+
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(400).json({ message: "invalid post id" });
+    }
+
+    const post = await Post.findById(id);
+
+    if (!post) {
+      return res.status(404).json({ message: "post not found" });
+    }
+
+    post.comments.push({
+      author: req.author,
+      content,
+    });
+
+    await post.save();
+
+    const newComment = post.comments[post.comments.length - 1];
+
+    res.status(201).json(newComment);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+}
+
+// PUT modifica commento
+export async function updatePostComment(req, res) {
+  try {
+    const { id, commentId } = req.params;
+    const { content } = req.body;
+
+    if (
+      !mongoose.Types.ObjectId.isValid(id) ||
+      !mongoose.Types.ObjectId.isValid(commentId)
+    ) {
+      return res.status(400).json({ message: "invalid id" });
+    }
+
+    const post = await Post.findById(id);
+
+    if (!post) {
+      return res.status(404).json({ message: "post not found" });
+    }
+
+    const comment = post.comments.id(commentId);
+
+    if (!comment) {
+      return res.status(404).json({ message: "comment not found" });
+    }
+
+    if (author !== undefined) {
+      comment.author = author;
+    }
+
+    if (content !== undefined) {
+      comment.content = content;
+    }
+
+    await post.save();
+
+    res.status(200).json(comment);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+}
+
+// DELETE commento
+export async function deletePostComment(req, res) {
+  try {
+    const { id, commentId } = req.params;
+
+    if (
+      !mongoose.Types.ObjectId.isValid(id) ||
+      !mongoose.Types.ObjectId.isValid(commentId)
+    ) {
+      return res.status(400).json({ message: "invalid id" });
+    }
+
+    const post = await Post.findById(id);
+
+    if (!post) {
+      return res.status(404).json({ message: "post not found" });
+    }
+
+    const comment = post.comments.id(commentId);
+
+    if (!comment) {
+      return res.status(404).json({ message: "comment not found" });
+    }
+
+    post.comments.pull(commentId);
+
+    await post.save();
+
+    res.status(200).json({ message: "comment deleted successfully" });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }

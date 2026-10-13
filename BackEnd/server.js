@@ -7,10 +7,12 @@ import PostRouter from "./routes/posts.js";
 import { logger } from "./middleware/logger.js";
 import Authrouter from "./routes/auth.js";
 import { authenticate } from "./middleware/authenticate.js";
+import passport from "passport";
+import googleStrategy from "./Strategies/google.js";
 
 const server = express();
 server.use(logger);
-
+passport.use(googleStrategy);
 server.use(express.json());
 server.use(cors());
 try {

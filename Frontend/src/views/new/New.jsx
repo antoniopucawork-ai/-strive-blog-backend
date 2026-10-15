@@ -19,7 +19,7 @@ const NewBlogPost = () => {
 
     try {
       const response = await fetch(
-        `${import.meta.env.REACT_APP_API_URL}/blogPosts`,
+        `${process.env.REACT_APP_API_URL}/blogPosts`,
         {
           method: "POST",
           headers: {

@@ -8,7 +8,7 @@ const BlogList = () => {
   const fetchPost = async () => {
     try {
       const result = await fetch(
-        `${import.meta.env.REACT_APP_API_URL}/blogPosts`,
+        `${process.env.REACT_APP_API_URL}/blogPosts`,
       );
       const data = await result.json();
       setPosts(data);

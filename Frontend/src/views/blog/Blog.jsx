@@ -13,7 +13,9 @@ const Blog = (props) => {
   const navigate = useNavigate();
   const fetchPost = async () => {
     try {
-      const result = await fetch(`http://localhost:9097/blogPosts/${id}`);
+      const result = await fetch(
+        `${import.meta.env.VITE_API_URL}/blogPosts/${id}`,
+      );
       const data = await result.json();
       if (data) {
         setBlog(data);

@@ -18,23 +18,26 @@ const NewBlogPost = () => {
     e.preventDefault();
 
     try {
-      const response = await fetch("http://localhost:9097/blogPosts", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          category,
-          title,
-          cover: "",
-          readTime: {
-            value: 4,
-            unit: "minuti",
+      const response = await fetch(
+        `${import.meta.env.VITE_API_URL}/blogPosts`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
           },
-          author: "antonio@email.com",
-          content: text,
-        }),
-      });
+          body: JSON.stringify({
+            category,
+            title,
+            cover: "",
+            readTime: {
+              value: 4,
+              unit: "minuti",
+            },
+            author: "antonio@email.com",
+            content: text,
+          }),
+        },
+      );
 
       const data = await response.json();
 

@@ -7,7 +7,7 @@ const BlogList = () => {
 
   const fetchPost = async () => {
     try {
-      const result = await fetch("http://localhost:9097/blogPosts");
+      const result = await fetch(`${import.meta.env.VITE_API_URL}/blogPosts`);
       const data = await result.json();
       setPosts(data);
     } catch (error) {

@@ -14,7 +14,7 @@ const Blog = (props) => {
   const fetchPost = async () => {
     try {
       const result = await fetch(
-        `${import.meta.env.VITE_API_URL}/blogPosts/${id}`,
+        `${import.meta.env.REACT_APP_API_URL}/blogPosts/${id}`,
       );
       const data = await result.json();
       if (data) {

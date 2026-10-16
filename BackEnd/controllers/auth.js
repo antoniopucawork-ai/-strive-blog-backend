@@ -6,7 +6,7 @@ export async function login(req, res) {
   try {
     const { email, password } = req.body;
 
-    const author = await Author.findOne({ email });
+    const author = await Author.findOne({ email }).select("+password");
 
     if (!author) {
       return res.status(401).json({
@@ -28,7 +28,7 @@ export async function login(req, res) {
       },
       process.env.JWT_SECRET,
       {
-        expiresIn: process.env.JWT_EXPIREIN,     //24h solo in fase di sviluppo , poi mettiamo 30m 
+        expiresIn: process.env.JWT_EXPIREIN, //24h solo in fase di sviluppo , poi mettiamo 30m
       },
     );
 
